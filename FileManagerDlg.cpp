@@ -26,6 +26,8 @@ CFileManagerDlg::CFileManagerDlg(CWnd* pParent /*=nullptr*/)
 void CFileManagerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_RIGHT_LIST, m_right_list);
+	DDX_Control(pDX, IDC_LEFT_LIST, m_left_list);
 }
 
 BEGIN_MESSAGE_MAP(CFileManagerDlg, CDialogEx)
@@ -45,7 +47,28 @@ BOOL CFileManagerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	m_left_list.Dir(DDL_ARCHIVE | DDL_HIDDEN | DDL_DIRECTORY , L"*.*");
+
+	CString name;
+	WIN32_FIND_DATA file_data;
+	HANDLE h_item_list = FindFirstFile(L"*.*", &file_data);
+	if (h_item_list != INVALID_HANDLE_VALUE)
+	{
+		do {
+			// 리스트에서 "." 디렉토리는 제외하고 싶다면?
+			// memcmp(file_data.cFileName, L".", 4);
+			// if(!(file_data.cFileName[0] == '.' && file_data.cFileName[1] == 0))
+			if (file_data.cFileName[0] != '.' || file_data.cFileName[1])
+			{
+				name = file_data.cFileName;
+				if (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) name = L"[" + name + L"]";
+				m_right_list.InsertString(-1, name);
+			}
+			
+		} while (FindNextFile(h_item_list, &file_data));
+
+		FindClose(h_item_list);
+	}
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
