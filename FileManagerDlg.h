@@ -13,6 +13,7 @@ public:
 	CFileManagerDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
 	
 	void DirToList(CListBox* ap_list_box, CString a_path);
+	void ChangeDir(CListBox* ap_list_box, int a_path_ctrl_id);
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FILEMANAGER_DIALOG };

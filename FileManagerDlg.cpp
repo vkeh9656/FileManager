@@ -127,16 +127,14 @@ HCURSOR CFileManagerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
-void CFileManagerDlg::OnLbnDblclkLeftList()
+void CFileManagerDlg::ChangeDir(CListBox* ap_list_box, int a_path_ctrl_id)
 {
 	CString str, path;						// '[]' 디렉토리인지 확인하기 위한
-	int index = m_left_list.GetCurSel(); // 어떤 항목을 더블클릭했는지 항목 확인
-	m_left_list.GetText(index, str); // 현재 위치의 text값을 읽어오기
+	int index = ap_list_box->GetCurSel(); // 어떤 항목을 더블클릭했는지 항목 확인
+	ap_list_box->GetText(index, str); // 현재 위치의 text값을 읽어오기
 	if (str[0] == '[') // 디렉토리라면,
 	{
-		GetDlgItemText(IDC_L_PATH_EDIT, path);
+		GetDlgItemText(a_path_ctrl_id, path);
 		str.TrimLeft('[');
 		str.TrimRight(']');
 
@@ -155,13 +153,19 @@ void CFileManagerDlg::OnLbnDblclkLeftList()
 			// ex)  c:\temp\aa -> 'c:\temp\aa\'
 			path += "\\";
 		}
-		SetDlgItemText(IDC_L_PATH_EDIT, path);
-		DirToList(&m_left_list, path);
+		SetDlgItemText(a_path_ctrl_id, path);
+		DirToList(ap_list_box, path);
 	}
+}
+
+
+void CFileManagerDlg::OnLbnDblclkLeftList()
+{
+	ChangeDir(&m_left_list, IDC_L_PATH_EDIT);
 }
 
 
 void CFileManagerDlg::OnLbnDblclkRightList()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	ChangeDir(&m_right_list, IDC_R_PATH_EDIT);
 }
