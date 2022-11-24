@@ -142,9 +142,9 @@ void CFileManagerDlg::ChangeDir(CListBox* ap_list_box, int a_path_ctrl_id)
 		{
 			// ex)  c:\temp\aa\ -> 'c:\temp\aa'
 			path.TrimRight('\\');
-			int pos = path.ReverseFind('\\');
-			// ex)  c:\temp\aa\ -> 'c:\temp\'
-			path.Delete(pos + 1, path.GetLength() - pos - 1);
+			int pos = path.ReverseFind('\\'); // 끝에서부터 백슬래시 찾기
+			// ex)  c:\temp\aa -> 'c:\temp\'
+			path.Delete(pos + 1, path.GetLength() - pos - 1); // pos 위치에서 1을 더해야 \가 제거가 안됨.
 		}
 		else
 		{
