@@ -33,8 +33,36 @@ void CFileManagerDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CFileManagerDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_LBN_DBLCLK(IDC_LEFT_LIST, &CFileManagerDlg::OnLbnDblclkLeftList)
+	ON_LBN_DBLCLK(IDC_RIGHT_LIST, &CFileManagerDlg::OnLbnDblclkRightList)
 END_MESSAGE_MAP()
 
+void CFileManagerDlg::DirToList(CListBox* ap_list_box, CString a_path)
+{
+	// 리스트 박스에 있던 기존 목록은 제거하기
+	ap_list_box->ResetContent();
+
+	CString name;
+	WIN32_FIND_DATA file_data;
+	HANDLE h_item_list = FindFirstFile(a_path + L"*.*", &file_data);
+	if (h_item_list != INVALID_HANDLE_VALUE)
+	{
+		do {
+			// 리스트에서 "." 디렉토리는 제외하고 싶다면?
+			// memcmp(file_data.cFileName, L".", 4);
+			// if(!(file_data.cFileName[0] == '.' && file_data.cFileName[1] == 0))
+			if (file_data.cFileName[0] != '.' || file_data.cFileName[1])
+			{
+				name = file_data.cFileName;
+				if (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) name = L"[" + name + L"]";
+				ap_list_box->InsertString(-1, name);
+			}
+
+		} while (FindNextFile(h_item_list, &file_data));
+
+		FindClose(h_item_list);
+	}
+}
 
 // CFileManagerDlg 메시지 처리기
 
@@ -57,27 +85,8 @@ BOOL CFileManagerDlg::OnInitDialog()
 	SetDlgItemText(IDC_L_PATH_EDIT, temp_path);
 	SetDlgItemText(IDC_R_PATH_EDIT, temp_path);
 
-
-	CString name;
-	WIN32_FIND_DATA file_data;
-	HANDLE h_item_list = FindFirstFile(L"*.*", &file_data);
-	if (h_item_list != INVALID_HANDLE_VALUE)
-	{
-		do {
-			// 리스트에서 "." 디렉토리는 제외하고 싶다면?
-			// memcmp(file_data.cFileName, L".", 4);
-			// if(!(file_data.cFileName[0] == '.' && file_data.cFileName[1] == 0))
-			if (file_data.cFileName[0] != '.' || file_data.cFileName[1])
-			{
-				name = file_data.cFileName;
-				if (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) name = L"[" + name + L"]";
-				m_right_list.InsertString(-1, name);
-			}
-			
-		} while (FindNextFile(h_item_list, &file_data));
-
-		FindClose(h_item_list);
-	}
+	DirToList(&m_left_list, temp_path);
+	DirToList(&m_right_list, temp_path);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -118,3 +127,41 @@ HCURSOR CFileManagerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CFileManagerDlg::OnLbnDblclkLeftList()
+{
+	CString str, path;						// '[]' 디렉토리인지 확인하기 위한
+	int index = m_left_list.GetCurSel(); // 어떤 항목을 더블클릭했는지 항목 확인
+	m_left_list.GetText(index, str); // 현재 위치의 text값을 읽어오기
+	if (str[0] == '[') // 디렉토리라면,
+	{
+		GetDlgItemText(IDC_L_PATH_EDIT, path);
+		str.TrimLeft('[');
+		str.TrimRight(']');
+
+		if (str == L"..")
+		{
+			// ex)  c:\temp\aa\ -> 'c:\temp\aa'
+			path.TrimRight('\\');
+			int pos = path.ReverseFind('\\');
+			// ex)  c:\temp\aa\ -> 'c:\temp\'
+			path.Delete(pos + 1, path.GetLength() - pos - 1);
+		}
+		else
+		{
+			// ex)  c:\temp + aa -> c:\temp\aa
+			path += str;
+			// ex)  c:\temp\aa -> 'c:\temp\aa\'
+			path += "\\";
+		}
+		SetDlgItemText(IDC_L_PATH_EDIT, path);
+		DirToList(&m_left_list, path);
+	}
+}
+
+
+void CFileManagerDlg::OnLbnDblclkRightList()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}

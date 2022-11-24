@@ -11,7 +11,8 @@ class CFileManagerDlg : public CDialogEx
 // 생성입니다.
 public:
 	CFileManagerDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
-
+	
+	void DirToList(CListBox* ap_list_box, CString a_path);
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FILEMANAGER_DIALOG };
@@ -33,4 +34,6 @@ protected:
 public:
 	CListBox m_right_list;
 	CListBox m_left_list;
+	afx_msg void OnLbnDblclkLeftList();
+	afx_msg void OnLbnDblclkRightList();
 };
