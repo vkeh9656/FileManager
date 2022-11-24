@@ -47,7 +47,16 @@ BOOL CFileManagerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	m_left_list.Dir(DDL_ARCHIVE | DDL_HIDDEN | DDL_DIRECTORY , L"*.*");
+	// "c:\"
+	wchar_t temp_path[MAX_PATH];
+	// "c:\temp" , temp 뒤에 \이 없음.  그래서 + "\" 해야됨
+	int len = GetCurrentDirectory(MAX_PATH, temp_path);
+	temp_path[len++] = '\\';
+	temp_path[len] = 0;
+
+	SetDlgItemText(IDC_L_PATH_EDIT, temp_path);
+	SetDlgItemText(IDC_R_PATH_EDIT, temp_path);
+
 
 	CString name;
 	WIN32_FIND_DATA file_data;
