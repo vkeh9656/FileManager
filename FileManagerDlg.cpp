@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CFileManagerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_R_CREATE_DIR_BTN, &CFileManagerDlg::OnBnClickedRCreateDirBtn)
 	ON_BN_CLICKED(IDC_L_TO_R_COPY_BTN, &CFileManagerDlg::OnBnClickedLToRCopyBtn)
 	ON_BN_CLICKED(IDC_R_OPEN_DIR_BTN, &CFileManagerDlg::OnBnClickedROpenDirBtn)
+	ON_BN_CLICKED(IDC_R_DEL_BTN, &CFileManagerDlg::OnBnClickedRDelBtn)
 END_MESSAGE_MAP()
 
 void CFileManagerDlg::DirToList(CListBox* ap_list_box, CString a_path)
@@ -214,4 +215,29 @@ void CFileManagerDlg::OnBnClickedROpenDirBtn()
 	CString path;
 	GetDlgItemText(IDC_R_PATH_EDIT, path);
 	ShellExecute(NULL, L"open", L"explorer.exe", path, path, SW_SHOW);
+}
+
+
+void CFileManagerDlg::OnBnClickedRDelBtn()
+{
+	int index = m_right_list.GetCurSel();
+	if (index != LB_ERR)
+	{
+		CString name;
+		m_right_list.GetText(index, name);
+		if (name[0] == '[')
+		{
+			MessageBox(L"디렉토리는 삭제할 수 없습니다.", L"삭제 실패", MB_ICONSTOP | MB_OK);
+		}
+		else
+		{
+			if (IDOK == MessageBox(L"삭제 대상: " + name, L"아래의 파일을 삭제하시겠습니까?", MB_ICONQUESTION | MB_OKCANCEL))
+			{
+				CString path;
+				GetDlgItemText(IDC_R_PATH_EDIT, path);
+				DeleteFile(path + name);
+				DirToList(&m_right_list, path);
+			}
+		}
+	}
 }

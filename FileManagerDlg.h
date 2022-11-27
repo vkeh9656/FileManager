@@ -40,4 +40,5 @@ public:
 	afx_msg void OnBnClickedRCreateDirBtn();
 	afx_msg void OnBnClickedLToRCopyBtn();
 	afx_msg void OnBnClickedROpenDirBtn();
+	afx_msg void OnBnClickedRDelBtn();
 };

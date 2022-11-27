@@ -12,6 +12,8 @@
 #define IDC_R_CREATE_DIR_BTN            1005
 #define IDC_R_OPEN_DIR_BTN              1006
 #define IDC_NAME_EDIT                   1007
+#define IDC_R_OPEN_DIR_BTN2             1007
+#define IDC_R_DEL_BTN                   1007
 #define IDC_L_TO_R_COPY_BTN             1008
 
 // Next default values for new objects
