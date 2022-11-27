@@ -36,6 +36,8 @@ BEGIN_MESSAGE_MAP(CFileManagerDlg, CDialogEx)
 	ON_LBN_DBLCLK(IDC_LEFT_LIST, &CFileManagerDlg::OnLbnDblclkLeftList)
 	ON_LBN_DBLCLK(IDC_RIGHT_LIST, &CFileManagerDlg::OnLbnDblclkRightList)
 	ON_BN_CLICKED(IDC_R_CREATE_DIR_BTN, &CFileManagerDlg::OnBnClickedRCreateDirBtn)
+	ON_BN_CLICKED(IDC_L_TO_R_COPY_BTN, &CFileManagerDlg::OnBnClickedLToRCopyBtn)
+	ON_BN_CLICKED(IDC_R_OPEN_DIR_BTN, &CFileManagerDlg::OnBnClickedROpenDirBtn)
 END_MESSAGE_MAP()
 
 void CFileManagerDlg::DirToList(CListBox* ap_list_box, CString a_path)
@@ -172,7 +174,44 @@ void CFileManagerDlg::OnLbnDblclkRightList()
 }
 
 
+#include "InputNameDlg.h"
 void CFileManagerDlg::OnBnClickedRCreateDirBtn()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	InputNameDlg ins_dlg;
+	if (ins_dlg.DoModal())
+	{
+		CString path;
+		GetDlgItemText(IDC_R_PATH_EDIT, path);
+		CreateDirectory(path + ins_dlg.GetName(), NULL);
+		DirToList(&m_right_list, path);
+	}
+}
+
+void CFileManagerDlg::OnBnClickedLToRCopyBtn()
+{
+	int index = m_left_list.GetCurSel();
+	if (index != LB_ERR)
+	{
+		CString name, src_path, dest_path;
+		m_left_list.GetText(index, name);
+		if (name[0] == '[')
+		{
+			MessageBox(L"디렉토리는 복사할 수 없습니다.", L"복사 실패", MB_ICONSTOP | MB_OK);
+		}	
+		else 
+		{
+			GetDlgItemText(IDC_L_PATH_EDIT, src_path);
+			GetDlgItemText(IDC_R_PATH_EDIT, dest_path);
+			CopyFile(src_path + name, dest_path + name, FALSE);
+			DirToList(&m_right_list, dest_path);
+		}
+	}
+}
+
+
+void CFileManagerDlg::OnBnClickedROpenDirBtn()
+{
+	CString path;
+	GetDlgItemText(IDC_R_PATH_EDIT, path);
+	ShellExecute(NULL, L"open", L"explorer.exe", path, path, SW_SHOW);
 }

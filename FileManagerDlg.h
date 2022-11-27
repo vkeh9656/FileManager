@@ -38,4 +38,6 @@ public:
 	afx_msg void OnLbnDblclkLeftList();
 	afx_msg void OnLbnDblclkRightList();
 	afx_msg void OnBnClickedRCreateDirBtn();
+	afx_msg void OnBnClickedLToRCopyBtn();
+	afx_msg void OnBnClickedROpenDirBtn();
 };
