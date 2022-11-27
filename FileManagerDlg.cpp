@@ -35,6 +35,7 @@ BEGIN_MESSAGE_MAP(CFileManagerDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_LBN_DBLCLK(IDC_LEFT_LIST, &CFileManagerDlg::OnLbnDblclkLeftList)
 	ON_LBN_DBLCLK(IDC_RIGHT_LIST, &CFileManagerDlg::OnLbnDblclkRightList)
+	ON_BN_CLICKED(IDC_R_CREATE_DIR_BTN, &CFileManagerDlg::OnBnClickedRCreateDirBtn)
 END_MESSAGE_MAP()
 
 void CFileManagerDlg::DirToList(CListBox* ap_list_box, CString a_path)
@@ -168,4 +169,10 @@ void CFileManagerDlg::OnLbnDblclkLeftList()
 void CFileManagerDlg::OnLbnDblclkRightList()
 {
 	ChangeDir(&m_right_list, IDC_R_PATH_EDIT);
+}
+
+
+void CFileManagerDlg::OnBnClickedRCreateDirBtn()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
